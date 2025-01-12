@@ -12,7 +12,7 @@ export default function Login() {
   const [isClient, setIsClient] = useState(false);
   const [userType, setUserType] = useState("student");
 
-  const handleUserTypeChange = (e : any) => {
+  const handleUserTypeChange = (e: any) => {
     setUserType(e.target.value);
   };
 
@@ -20,9 +20,9 @@ export default function Login() {
     setIsClient(true);
   }, []);
 
-  const handleLogin = async (e : any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
-    if(userType === "student") {
+    if (userType === "student") {
       try {
         const res = await fetch("http://localhost:5000/auth/student/login", {
           method: "POST",
@@ -31,18 +31,18 @@ export default function Login() {
           },
           body: JSON.stringify(loginData),
         })
-  
+
         const resData = await res.json();
         const { data } = resData;
         localStorage.setItem('studentId', data)
-  
+
         if (resData.status) {
           toast.success('Login Successfull');
           router.push("/User");
         } else {
           alert("Invalid credentials");
         }
-  
+
       }
       catch (e) {
         console.error(e);
@@ -57,24 +57,24 @@ export default function Login() {
           },
           body: JSON.stringify(loginData),
         })
-  
+
         const resData = await res.json();
         const { data } = resData;
         localStorage.setItem('facultyId', data)
-  
+
         if (resData.status) {
           toast.success('Login Successfull');
           router.push("/Admin");
         } else {
           alert("Invalid credentials");
         }
-  
+
       }
       catch (e) {
         console.error(e);
       }
     }
-    else{
+    else {
       alert("Invalid User Type");
     }
   }
@@ -142,7 +142,7 @@ export default function Login() {
           <button
             type="submit"
             className="w-full py-3 bg-[#514DEC] text-white font-semibold rounded-lg hover:bg-[#05041F] transition duration-300"
-            // onClick={handleLogin}
+          // onClick={handleLogin}
           >
             Login
           </button>
