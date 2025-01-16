@@ -2,7 +2,6 @@ const Notification = require("../models/notification_model")
 const student = require("../models/student_model");
 
 const getNotificationsForSemseter = async (req, res) => {
-    const { id } = req.params;
     try {
         const notifications = await Notification.find({
             createdAt: {

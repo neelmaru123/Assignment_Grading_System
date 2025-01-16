@@ -38,9 +38,9 @@ export default function Subjects() {
       <div className="flex items-center justify-center">
         <h1 className="text-3xl font-semibold ">Subjects</h1>
       </div>
-      <div className="flex flex-wrap mt-5 -mx-3">
+      <div className="flex flex-wrap mt-5 -mx-1">
         {state.subject.map((subject: any) => (
-          <div className="relative h-60 w-96 mx-3 mb-6  transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject.subjectId}>
+          <div className="relative h-60 w-80 mx-3 mb-6  transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject.subjectId}>
             <div className="h-3/4 w-auto rounded-b-lg overflow-hidden">
               <Image
                 src="https://wallpaperaccess.com/full/1704529.jpg"
@@ -55,7 +55,6 @@ export default function Subjects() {
           </div>
         ))}
       </div>
-
     </div>
   )
 }

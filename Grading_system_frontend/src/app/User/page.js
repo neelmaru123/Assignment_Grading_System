@@ -221,7 +221,7 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody className="">
-                {assignmentsToShow.map((assignment) => (
+                {assignmentsToShow.length > 0 && assignmentsToShow.map((assignment) => (
                   <tr key={assignment._id} className="align-middle h-16">
                     <td className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center me-2">
                       {/* Icon or Image */}
@@ -249,11 +249,11 @@ export default function Home() {
                     </td>
                   </tr>
                 ))}
-                <tr>
-                  <td colSpan={3} className="flex justify-center items-center align-middle">
-
+                {/* {assignmentsToShow.length === 0 && <tr className="flex flex-col justify-center items-center text-gray-700">
+                  <td colSpan={5} rowSpan={5} className="text-center">
+                    No Pending Assignment
                   </td>
-                </tr>
+                </tr>} */}
               </tbody>
             </table>
             {pedningAssignment.length > 3 && (
