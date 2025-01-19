@@ -192,7 +192,7 @@ export default function Home() {
                     <Search className="text-gray-500" />
                   </div>
                 </div>
-                <div className="relative">
+                <div className="relative ">
                   <select className="bg-slate-200 h-10 rounded-lg ps-3 pe-10 w-full appearance-none text-gray-700" onChange={(e) => {
                     setFilteredPendingAssignment(e.target.value)
                   }}>

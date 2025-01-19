@@ -1,4 +1,4 @@
-import Sidebar from "../sidebar/page";
+import Sidebar from "./sidebar/page";
 
 export default function RootLayout({
   children

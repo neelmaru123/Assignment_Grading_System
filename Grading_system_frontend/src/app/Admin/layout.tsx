@@ -1,4 +1,4 @@
-import Sidebar from "../sidebar/page";
+import Sidebar from "./sidebar/page";
 import { ReactNode } from "react";
 
 interface RootLayoutProps {

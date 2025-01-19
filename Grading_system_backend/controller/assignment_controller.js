@@ -109,7 +109,6 @@ const updateAssignment = async (req, res) => {
         });
     }
 
-
     // Find Assignment and update it with the request body
     await assignmentModel.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
