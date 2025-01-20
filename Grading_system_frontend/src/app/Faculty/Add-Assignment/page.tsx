@@ -47,7 +47,7 @@ function AddAssignment() {
     return (
         <div className="ml-40 h-screen w-auto text-black p-4">
             <div className="flex justify-between items-center mb-8">
-                <ArrowLeft className="text-3xl cursor-pointer" onClick={() => { router.replace('/Admin') }} />
+                <ArrowLeft className="text-3xl cursor-pointer" onClick={() => { router.replace('/Faculty') }} />
                 <h1 className="text-3xl font-semibold">Add Assignment</h1>
                 <div className="w-8"></div> {/* Empty div to balance the layout */}
             </div>

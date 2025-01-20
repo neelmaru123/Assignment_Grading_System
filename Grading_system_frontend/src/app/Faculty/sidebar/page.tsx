@@ -17,14 +17,14 @@ export default function Sidebar() {
                     <ul className="space-y-4">
                         <li>
                             <div className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-darkblue default:bg-darkblue" onClick={() => {
-                                router.replace('/Admin')
+                                router.replace('/Faculty')
                             }}>
                                 <LayoutGrid color="#514DEC" />
                             </div>
                         </li>
                         <li>
                             <div className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-darkblue" onClick={() => {
-                                router.replace('/Admin/Subjects')
+                                router.replace('/Faculty/Subjects')
                             }}>
                                 <Box color="#514DEC" />
                             </div>

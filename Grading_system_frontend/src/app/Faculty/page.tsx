@@ -149,7 +149,7 @@ export default function AdminHome() {
                     {/* Right side section */}
                     <div>
                         <div className="float-end bg-darkblue h-14 rounded-full text-white flex items-center justify-center p-3 ms-3 cursor-pointer" onClick={() => {
-                            router.replace('/Admin/Add-Assignment')
+                            router.replace('/Faculty/Add-Assignment')
                         }}>
                             Add Assignment
                         </div>

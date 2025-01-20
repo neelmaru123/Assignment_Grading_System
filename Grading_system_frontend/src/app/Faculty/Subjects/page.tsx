@@ -6,32 +6,21 @@ import { useEffect, useState } from "react"
 
 
 export default function Subjects() {
-  const studentId = localStorage.getItem('studentId');
+  const facultyId = localStorage.getItem("facultyId")
   const [state, setState] = useState<{
     subject: [],
-    student: {
-      semester: string
-    }
   }>({
     subject: [],
-    student: {
-      semester: ""
-    }
   })
 
   useEffect(() => {
-    fetch("http://localhost:5000/students/" + studentId)
-      .then((response) => response.json())
-      .then((data) => setState((prev) => ({ ...prev, student: data })))
+      fetch("http://localhost:5000/subjects/getSubjectByFaculty/" + facultyId)
+        .then((res) => res.json())
+        .then((data) => setState((prev) => ({ ...prev, subject: data })))
   }, [])
 
-  useEffect(() => {
-    if (state.student && state.student.semester) {
-      fetch("http://localhost:5000/semesters/getSemesterById/" + state.student.semester)
-        .then((res) => res.json())
-        .then((data) => setState((prev) => ({ ...prev, subject: data.subjects })))
-    }
-  }, [state.student])
+  console.log(state.subject);
+  
 
   return (
     <div className="ml-28 h-screen w-auto text-black p-4">
@@ -42,7 +31,7 @@ export default function Subjects() {
           </div>
           <div className="flex flex-wrap">
             {state.subject.map((subject: any) => (
-              <div className="h-60 w-80 mx-3 mb-6 rounded-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject.subjectId}>
+              <div className="h-60 w-80 mx-3 mb-6 rounded-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject._id}>
                 <div className="h-3/4 w-auto overflow-hidden">
                   <Image
                     src="https://wallpaperaccess.com/full/1704529.jpg"

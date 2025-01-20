@@ -64,7 +64,7 @@ export default function Login() {
 
         if (resData.status) {
           toast.success('Login Successfull');
-          router.push("/Admin");
+          router.push("/Faculty");
         } else {
           alert("Invalid credentials");
         }
