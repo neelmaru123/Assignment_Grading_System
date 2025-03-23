@@ -4,7 +4,8 @@ const { registerSubject,
     getAllSubjects,
     updateSbuject,
     deleteSubject,
-    getSubjectByFaculty } = require('../controller/subject_controller');
+    getSubjectByFaculty,
+    getSubjectById } = require('../controller/subject_controller');
 
 router
     .post('/registerSubject', registerSubject)
@@ -12,5 +13,6 @@ router
     .put('/updateSubject/:id', updateSbuject)
     .delete('/deleteSubject/:id', deleteSubject)
     .get('/getSubjectByFaculty/:facultyId', getSubjectByFaculty)
+    .get('/getSubjectById/:id', getSubjectById);
 
 module.exports = router;

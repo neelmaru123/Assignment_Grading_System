@@ -1,24 +1,24 @@
 'use client'
-import { Bell, ChartColumnDecreasing, ChevronDown, CrossIcon, ListChecks, ListPlus, Search, X } from "lucide-react";
+import { ArrowBigLeft, ArrowLeft, Bell, ChevronDown, ListPlus, Search, X } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useParams, useRouter } from "next/navigation";
 
-export default function Home() {
+export default function SubjectById() {
+  const { SubjectId } = useParams();
+  const router = useRouter();
   const [pedningAssignment, setPedningAssignment] = useState([]);
-  const [filteredPendingAssignment, setFilteredPendingAssignment] = useState("");
   const [pendingShowMore, setPendingShowMore] = useState(false);
   const [submittedShowMore, setSubmittedShowMore] = useState(false);
   const [isSubmittedModalOpen, setIsSubmittedModalOpen] = useState(false);
   const [submittedAssignment, setSubmittedAssignment] = useState([]);
-  const [filteredSubmittedAssignment, setFilteredSubmittedAssignment] = useState("");
   const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
   const [student, setStudent] = useState({});
   const [subject, setSubject] = useState([]);
-  const [notification, setNotification] = useState([]);
   const fileInputRef = useRef(null);
   const studentId = localStorage.getItem('studentId');
-  const [isNotificationModelOpen, setIsNotificationModelOpen] = useState(false);
+  const [faculty, setFaculty] = useState([]);
   const [latestNotification, setLatestNotification] = useState([]);
 
   useEffect(() => {
@@ -29,21 +29,21 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (student && student.semester) {
-      fetch("http://localhost:5000/semesters/getSemesterById/" + student.semester)
-        .then((res) => res.json())
-        .then((data) => setSubject(data.subjects))
-
-      fetch("http://localhost:5000/notifications/student/" + studentId)
-        .then((res) => res.json())
-        .then((data) => setNotification(data))
-
-      fetch("http://localhost:5000/notifications/latest/" + studentId)
-        .then((res) => res.json())
-        .then((data) => setLatestNotification(data))
-    }
+    // Get subject
+    fetch("http://localhost:5000/subjects/getSubjectById/" + SubjectId)
+      .then((response) => response.json())
+      .then((data) => setSubject(data));
   }, [student])
 
+  useEffect(() => {
+    if(subject.facultyId) {
+    fetch("http://localhost:5000/faculties/" + subject.facultyId)
+      .then((res) => res.json())
+      .then((data) => setFaculty(data));
+    }
+  }, [subject])
+
+  console.log(faculty);
 
   useEffect(() => {
     // Get pendingAssignment
@@ -78,19 +78,18 @@ export default function Home() {
     setIsSubmittedModalOpen(true);
   };
 
-  const filteredAssignments = pedningAssignment
-    ? pedningAssignment.filter((assign) =>
-      assign.subjectName?.toLowerCase().includes(filteredPendingAssignment.toLowerCase())
-    ) : [];
-  const assignmentsToShow = pendingShowMore ? filteredAssignments : filteredAssignments.slice(0, 3);
+  // const filteredAssignments = pedningAssignment
+  //   ? pedningAssignment.filter((assign) =>
+  //     assign.subjectName?.toLowerCase().includes(filteredPendingAssignment.toLowerCase())
+  //   ) : [];
+  const assignmentsToShow = pendingShowMore ? pedningAssignment : pedningAssignment.slice(0, 3);
 
-  const filteredSubmittedAssignments = submittedAssignment
-    ? submittedAssignment.filter((assign) =>
-      assign.assignmentDetails.subjectName?.toLowerCase().includes((filteredSubmittedAssignment || "").toLowerCase())
-    )
-    : [];
-  const submittedAssignmentsToShow = submittedShowMore ? filteredSubmittedAssignments : filteredSubmittedAssignments.slice(0, 3);
-
+  // const filteredSubmittedAssignments = submittedAssignment
+  //   ? submittedAssignment.filter((assign) =>
+  //     assign.assignmentDetails.subjectName?.toLowerCase().includes((filteredSubmittedAssignment || "").toLowerCase())
+  //   )
+  //   : [];
+  const submittedAssignmentsToShow = submittedShowMore ? submittedAssignment : submittedAssignment.slice(0, 3);
 
   const getBackgroundColorClass = (grade) => {
     if (grade == 'A' || grade == 'A+') {
@@ -135,34 +134,8 @@ export default function Home() {
 
   return (
     <div className="ml-28 h-screen w-auto text-black p-4">
-      <div className="flex flex-row justify-between mb-9">
-        {/* Left Side Section  */}
-        <div>
-          <div className="h-14 w-14 rounded-full bg-white flex items-center justify-center float-start relative overflow-hidden me-3">
-            <Image src="/Profile.jpeg" alt="Profile Image" layout="fill" objectFit="cover" />
-          </div>
-          <div className="float-start h-14 w-64 bg-white rounded-full p-1 align-middle">
-            <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center float-start">
-              <ListChecks color="#514DEC" />
-            </div>
-            <div className="float-start ms-2">
-              <p className="font-bold">Pending assignments</p>
-              <p className="text-sm">5</p>
-            </div>
-          </div>
-        </div>
-        {/* Right side section */}
-        <div>
-          <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center float-end">
-            <Bell color="#05041F" className="cursor-pointer" onClick={() => {
-              setIsNotificationModelOpen(true);
-            }} />
-          </div>
-        </div>
-      </div>
-      <div>
-        <p className="text-gray-500 font-serif text-2xl"> Hello,</p>
-        <h1 className=" font-serif font-bold text-5xl float-start me-3">{student.name}</h1>
+      <div className="h-12 w-12 rounded-full bg-white flex items-center justify-center float-start cursor-pointer" onClick={() => router.replace("/User/Subjects")}>
+        <ArrowLeft color="#05041F" className="cursor-pointer"/>
       </div>
       {/* Big box */}
       <div className="mt-4 w-full h-auto float-start bg-gray-300 rounded-2xl p-4 mb-4">
@@ -183,21 +156,6 @@ export default function Home() {
                     <Search className="text-gray-500" />
                   </div>
                 </div>
-                <div className="relative ">
-                  <select className="bg-slate-200 h-10 rounded-lg ps-3 pe-10 w-full appearance-none text-gray-700" onChange={(e) => {
-                    setFilteredPendingAssignment(e.target.value)
-                  }}>
-                    <option value="">Select Subject</option>
-                    {subject.map((subject) => {
-                      return (
-                        <option key={subject._id} value={subject.subjectName} className="text-gray-700">{subject.subjectName}</option>
-                      )
-                    })}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                    <ChevronDown className="text-gray-500" />
-                  </div>
-                </div>
               </div>
             </div>
             {/* Box-1 Content */}
@@ -212,50 +170,41 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody className="">
-                {assignmentsToShow.length > 0 &&
-                  assignmentsToShow.map((assignment) => {
-                    const isLate = new Date() > new Date(assignment.deadline); // Check if the current date is past the deadline
-                    return (
-                      <tr key={assignment._id} className="align-middle h-16">
-                        <td className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center me-2">
-                          {/* Icon or Image */}
-                        </td>
-                        <td>
-                          <p className="font-serif font-bold">{assignment.subjectName}</p>
-                          <div className="flex flex-row space-x-5">
-                            <p className="font-serif">{assignment.title}</p>
-                            {isLate && <span className="text-red-600 font-serif font-bold">Late Submission</span>}
-                          </div>
-
-                        </td>
-                        <td>
-                          <p className="font-serif font-bold">{new Date(assignment.createdAt).toLocaleDateString()}</p>
-                        </td>
-                        <td>
-                          <p className="font-serif font-bold">{new Date(assignment.deadline).toLocaleDateString()}</p>
-                        </td>
-                        <td className="text-right">
-                          <div
-                            className="bg-blue text-white p-2 rounded-full inline-flex items-center justify-center cursor-pointer"
-                            onClick={handleDivClick}
-                          >
-                            <ListPlus />
-                          </div>
-                          <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{ display: "none" }}
-                            onChange={(e) => handleFileChange(assignment._id, e)}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                {/* {assignmentsToShow.length === 0 && <tr className="flex flex-col justify-center items-center text-gray-700">
+                {assignmentsToShow.length > 0 && assignmentsToShow
+                  .filter((assignment) => assignment.subjectId == SubjectId)
+                  .map((assignment) => (
+                    <tr key={assignment._id} className="align-middle h-16">
+                      <td className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center me-2">
+                        {/* Icon or Image */}
+                      </td>
+                      <td>
+                        <p className="font-serif font-bold">{assignment.subjectName}</p>
+                        <p className="font-serif">{assignment.title}</p>
+                      </td>
+                      <td>
+                        <p className="font-serif font-bold">{new Date(assignment.createdAt).toLocaleDateString()}</p>
+                      </td>
+                      <td>
+                        <p className="font-serif font-bold">{new Date(assignment.deadline).toLocaleDateString()}</p>
+                      </td>
+                      <td className="text-right">
+                        <div className="bg-blue text-white p-2 rounded-full inline-flex items-center justify-center cursor-pointer" onClick={handleDivClick}>
+                          <ListPlus />
+                        </div>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          style={{ display: "none" }}
+                          onChange={(e) => handleFileChange(assignment._id, e)}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                {assignmentsToShow.length === 0 && <tr className="flex flex-col justify-center items-center text-gray-700">
                   <td colSpan={5} rowSpan={5} className="text-center">
                     No Pending Assignment
                   </td>
-                </tr>} */}
+                </tr>}
               </tbody>
             </table>
             {pedningAssignment.length > 3 && (
@@ -270,30 +219,22 @@ export default function Home() {
           <div className="w-1/4 h-96 bg-white rounded-2xl p-4">
             {/* Box-2 Header */}
             <div>
-              <p className="text-2xl font-serif font-bold mb-3">Notification</p>
+              <p className="text-2xl font-serif font-bold mb-3">Subject details</p>
             </div>
             {/* Box-2 Content */}
             <div
               className={`flex flex-col space-y-4 overflow-y-auto ${latestNotification.length > 3 ? "h-72" : ""}`}
               style={{ scrollBehavior: "smooth" }}
             >
-              {latestNotification.length > 0 ? (
-                latestNotification.map((notify) => (
-                  <div key={notify._id} className="bg-slate-200 w-full rounded-lg p-4">
-                    <h1 className="text-gray-800 text-xl font-bold mb-1">{notify.title}</h1>
-                    <p className="text-gray-600 text-sm">{notify.message}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="flex justify-center items-center">
-                  <p className="text-gray-600 text-md align-middle">No latest notification</p>
+              <div className="flex flex-col space-y-4">
+                <p className="text-gray-800 bg-slate-200 w-full rounded-lg p-4 text-lg font-bold">Subject : {subject.subjectName}</p>
+                <p className="text-gray-600 bg-slate-200 w-full rounded-lg p-4 text-sm">Faculty: {faculty.name}</p>
                 </div>
-              )}
             </div>
           </div>
         </div>
         <div className="flex space-x-3">
-          <div className="w-3/4 h-96 bg-white rounded-2xl p-4">
+          <div className="w-full h-96 bg-white rounded-2xl p-4">
             {/* Box-1 Header Content */}
             <div className="flex flex-row justify-between">
               <p className="text-2xl font-serif font-bold mb-3">Submitted assignments</p>
@@ -307,21 +248,6 @@ export default function Home() {
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-4 pb-1">
                     <Search className="text-gray-500" />
-                  </div>
-                </div>
-                <div className="relative">
-                  <select className="bg-slate-200 h-10 rounded-lg ps-3 pe-10 w-full appearance-none text-gray-700" onChange={(e) => {
-                    setFilteredSubmittedAssignment(e.target.value)
-                  }}>
-                    <option value="">Select Subject</option>
-                    {subject.map((subject) => {
-                      return (
-                        <option key={subject._id} value={subject.subjectName} className="text-gray-700">{subject.subjectName}</option>
-                      )
-                    })}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                    <ChevronDown className="text-gray-500" />
                   </div>
                 </div>
               </div>
@@ -340,6 +266,7 @@ export default function Home() {
               </thead>
               <tbody className="">
                 {submittedAssignmentsToShow
+                  .filter((assignment) => assignment.assignmentDetails.subjectId == SubjectId)
                   .filter((assignment) => {
                     const gradeDate = new Date(assignment.assignments.submissionDate);
                     const oneDayAgo = new Date();
@@ -371,7 +298,7 @@ export default function Home() {
                 {/* Add more rows as needed */}
               </tbody>
             </table>
-            {submittedAssignment.length > 3 && (
+            {submittedAssignment.length > 0 && (
               <div
                 className="mt-4 text-gray-500 px-4 py-2 rounded w-full text-center cursor-pointer flex justify-center items-center"
                 onClick={handleViewMoreClickForSubmitted}
@@ -379,9 +306,6 @@ export default function Home() {
                 View More
               </div>
             )}
-          </div>
-          <div className="w-1/4 h-96 bg-white rounded-2xl p-4 bg-[url('/background.svg')] bg-cover bg-center">
-            {/* Box-2 Content */}
           </div>
         </div>
       </div>
@@ -460,6 +384,7 @@ export default function Home() {
             </thead>
             <tbody className="">
               {submittedAssignment
+                .filter((assignment) => assignment.assignmentDetails.subjectId == SubjectId)
                 .filter((assignment) => {
                   const gradeDate = new Date(assignment.assignments.submissionDate);
                   const oneDayAgo = new Date();
@@ -493,34 +418,6 @@ export default function Home() {
           </table>
         </div>
       </div>
-
-      <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center modal-overlay modal-overlay ${isNotificationModelOpen ? 'show' : ''}`}>
-        <div className={`bg-white p-4 rounded-lg w-1/3 h-3/4 overflow-auto modal-content ${isNotificationModelOpen ? 'show' : ''}`}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-serif font-bold">All Notofications</h2>
-            <button
-              className="text-darkblue font-bold cursor-pointer"
-              onClick={() => setIsNotificationModelOpen(false)}
-            >
-              <X />
-            </button>
-          </div>
-          {/* Box-2 Content */}
-          <div className="flex flex-col">
-            {notification.map((notify) => (
-              <div key={notify._id} className="bg-slate-200 w-full rounded-lg p-4 mb-4">
-                <h1 className="text-gray-800 text-xl font-bold mb-1">{notify.title}</h1>
-                <p className="text-gray-600 text-sm">{notify.message}</p>
-              </div>
-            ))}
-            {/* <div className="h-10 bg-slate-200 w-full rounded-full flex justify-center items-center">
-                <p className="text-gray-500">New Assingment of CN uploaded</p>
-              </div> */}
-          </div>
-        </div>
-      </div>
-
-
     </div >
   );
 }

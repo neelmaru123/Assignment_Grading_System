@@ -1,19 +1,29 @@
 'use client'
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
-
-
 
 export default function Subjects() {
   const studentId = localStorage.getItem('studentId');
+  const router = useRouter();
   const [state, setState] = useState<{
-    subject: [],
+    subject: [
+      {
+        subjectId: string,
+        subjectName: string
+      }
+    ],
     student: {
       semester: string
     }
   }>({
-    subject: [],
+    subject: [
+      {
+        subjectId: "",
+        subjectName: ""
+      }
+    ],
     student: {
       semester: ""
     }
@@ -42,7 +52,9 @@ export default function Subjects() {
           </div>
           <div className="flex flex-wrap">
             {state.subject.map((subject: any) => (
-              <div className="h-60 w-80 mx-3 mb-6 rounded-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject.subjectId}>
+              <div className="h-60 w-80 mx-3 mb-6 rounded-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject.subjectId} onClick={() => {
+                router.replace("/User/Subjects/" + subject.subjectId)
+              }}>
                 <div className="h-3/4 w-auto overflow-hidden">
                   <Image
                     src="https://wallpaperaccess.com/full/1704529.jpg"

@@ -1,18 +1,18 @@
 'use client'
 
-import { Bell, ChartColumnDecreasing, ChevronDown, ListChecks, ListPlus, Search, X } from "lucide-react"
+import { Bell, ChevronDown, ListChecks, ListPlus, Search, X } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import CompletionChart from "../components/CompletionChart"
 import { useRouter } from "next/navigation"
 
-
 export default function AdminHome() {
     const [activeTab, setActiveTab] = useState("pending");
     const router = useRouter()
+    const URL = "http://localhost:5000";
     const assignmetnData = {
-        pendingStudent : 200,
-        totalStudents : 373,
+        pendingStudent: 200,
+        totalStudents: 373,
         title: "",
         subjectName: ""
     }
@@ -26,7 +26,7 @@ export default function AdminHome() {
         totalStudents: number;
         pendingStudentsCount: number;
     }
-    
+
     const [state, setState] = useState<{
         filteredData: string;
         faculty: { name: string };
@@ -98,23 +98,23 @@ export default function AdminHome() {
             .then((data) => setState((prevState) => ({ ...prevState, submitedStudents: data })))
     }
 
-    if(state.assignmentData.length > 0){
-        assignmetnData.pendingStudent = state.assignmentData[0].pendingStudentsCount;
-        assignmetnData.totalStudents = state.assignmentData[0].totalStudents;
-        assignmetnData.title = state.assignmentData[0].title;
-        assignmetnData.subjectName = state.assignmentData[0].subjectName
+    // if(state.assignmentData.length > 0){
+    //     assignmetnData.pendingStudent = state.assignmentData[0].pendingStudentsCount;
+    //     assignmetnData.totalStudents = state.assignmentData[0].totalStudents;
+    //     assignmetnData.title = state.assignmentData[0].title;
+    //     assignmetnData.subjectName = state.assignmentData[0].subjectName
 
-        // setState((prevState) => ({
-        //     ...prevState,
-        //     graphData: {
-        //         ...prevState.graphData,
-        //         pendingStudents: state.assignmentData[0]?.pendingStudentsCount || 0,
-        //         totalStudents: state.assignmentData[0]?.totalStudents || 0,
-        //         title: state.assignmentData[0]?.title || '',
-        //         subjectName: state.assignmentData[0]?.subjectName || ''
-        //     }
-        // }));
-    }   
+    //     // setState((prevState) => ({
+    //     //     ...prevState,
+    //     //     graphData: {
+    //     //         ...prevState.graphData,
+    //     //         pendingStudents: state.assignmentData[0]?.pendingStudentsCount || 0,
+    //     //         totalStudents: state.assignmentData[0]?.totalStudents || 0,
+    //     //         title: state.assignmentData[0]?.title || '',
+    //     //         subjectName: state.assignmentData[0]?.subjectName || ''
+    //     //     }
+    //     // }));
+    // }   
 
     const handleViewMoreClick = () => {
         setState((prevState) => ({ ...prevState, showMore: true }))
@@ -141,14 +141,14 @@ export default function AdminHome() {
                                 <ListChecks color="#514DEC" />
                             </div>
                             <div className="float-start ms-2">
-                                <p className="font-bold">Pending assignments</p>
+                                <p className="font-bold">Current Assignments</p>
                                 <p className="text-sm">5</p>
                             </div>
                         </div>
                     </div>
                     {/* Right side section */}
                     <div>
-                        <div className="float-end bg-darkblue h-14 rounded-full text-white flex items-center justify-center p-3 ms-3 cursor-pointer" onClick={() => {
+                        <div className="float-end bg-darkblue h-14 rounded-full text-white font-semibold flex items-center justify-center p-5 ms-3 cursor-pointer" onClick={() => {
                             router.replace('/Faculty/Add-Assignment')
                         }}>
                             Add Assignment
@@ -161,15 +161,6 @@ export default function AdminHome() {
                 <div>
                     <p className="text-gray-500 font-serif text-2xl"> Prof.</p>
                     <h1 className=" font-serif font-bold text-5xl float-start me-3">{state.faculty.name}</h1>
-                    <div className="float-start h-14 w-48 bg-white rounded-full p-1 align-middle">
-                        <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center float-start">
-                            <ChartColumnDecreasing color="#514DEC" />
-                        </div>
-                        <div className="float-start ms-2">
-                            <p className="font-bold">Statistic</p>
-                            <p className="text-sm">Last week</p>
-                        </div>
-                    </div>
                 </div>
                 {/* Big Box */}
                 <div className="mt-4 w-full h-auto float-start bg-gray-300 rounded-2xl p-4 mb-4">
@@ -220,39 +211,43 @@ export default function AdminHome() {
                                 </thead>
                                 <tbody>
                                     {filteredAssignment.map((assignment) => (
-                                        <tr key={assignment._id} className="align-middle h-16">
+                                        <tr key={assignment._id} className="align-middle h-16 cursor-pointer"
+                                            onClick={() => router.replace("/Faculty/" + assignment._id)}>
+
                                             <td className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center me-2">
                                                 {/* Icon or Image */}
                                             </td>
+
                                             <td>
-                                                <p className="font-serif font-bold">{assignment.subjectName}</p>
+                                                <p className="font-serif font-bold hover:text-blue">{assignment.subjectName}</p>
                                                 <p className="font-serif">{assignment.title}</p>
                                             </td>
+
                                             <td>
                                                 <p className="font-serif font-bold">{assignment.semesterName}</p>
                                             </td>
+
                                             <td>
                                                 <p className="font-serif font-bold">{assignment.totalStudents}</p>
                                             </td>
+
                                             <td>
                                                 <p className="font-serif font-bold">{assignment.pendingStudentsCount}</p>
                                             </td>
-                                            <td className="text-right">
-                                                <div className="bg-blue text-white p-2 rounded-full inline-flex items-center justify-center cursor-pointer" onClick={() => {
-                                                    setPendingStudents(assignment._id)
-                                                    handleViewMoreClick()
-                                                }}>
+
+                                            <td className="text-right" onClick={(event) => event.stopPropagation()}>
+                                                <div
+                                                    className="bg-blue text-white p-2 rounded-full inline-flex items-center justify-center cursor-pointer"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation(); // Stops the <tr> click
+                                                        setPendingStudents(assignment._id);
+                                                        handleViewMoreClick();
+                                                    }}>
                                                     <ListPlus />
                                                 </div>
                                             </td>
                                         </tr>
                                     ))}
-
-                                    <tr>
-                                        <td colSpan={3} className="flex justify-center items-center align-middle">
-
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                             {/* {(
@@ -279,7 +274,7 @@ export default function AdminHome() {
                 </div>
             </div>
 
-            {/* Pending Assignments Modal */}
+            {/* View Student Modal */}
             <div className={`fixed inset-0 bg-gray-600 shadow-2xl shadow-darkblue bg-opacity-50 flex items-center justify-center modal-overlay modal-overlay ${state.isModalOpen ? 'show' : ''}`}>
                 <div className={`bg-white p-4 rounded-lg w-3/4 h-3/4 overflow-auto text-black modal-content ${state.isModalOpen ? 'show' : ''}`}>
                     <div className="flex justify-between items-center mb-4">
@@ -291,7 +286,7 @@ export default function AdminHome() {
                             <input
                                 className="bg-slate-200 h-10 rounded-lg ps-3 pe-3 w-full"
                                 type="text"
-                                placeholder="Search by subject"
+                                placeholder="Search by Student"
                                 onChange={(e) => {
                                     if (activeTab === "submitted") {
                                         setState((prevState) => ({ ...prevState, filterSubmittedStudents: e.target.value }))

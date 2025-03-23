@@ -11,6 +11,7 @@ export default function Login() {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
   const [userType, setUserType] = useState("student");
+  const [error, setError] = useState("")
 
   const handleUserTypeChange = (e: any) => {
     setUserType(e.target.value);
@@ -34,15 +35,14 @@ export default function Login() {
 
         const resData = await res.json();
         const { data } = resData;
-        localStorage.setItem('studentId', data)
 
         if (resData.status) {
+          localStorage.setItem('studentId', data)
           toast.success('Login Successfull');
           router.push("/User");
         } else {
-          alert("Invalid credentials");
+          setError("Invalid credentials")
         }
-
       }
       catch (e) {
         console.error(e);
@@ -66,7 +66,7 @@ export default function Login() {
           toast.success('Login Successfull');
           router.push("/Faculty");
         } else {
-          alert("Invalid credentials");
+          setError("Invalid credentials")
         }
 
       }
@@ -87,7 +87,8 @@ export default function Login() {
     <div className="bg-gray-100 flex items-center justify-center min-h-screen">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-[#514DEC] text-3xl font-semibold text-center mb-6">Login</h2>
-        <div className="text-black pb-4 flex align-middle space-x-2">
+        <span className="text-red-600">{error}</span>
+        <div className="text-black pb-4 flex align-middle space-x-2 mt-4">
           <input
             type="radio"
             className="form-radio h-5 w-5 text-blue-500"

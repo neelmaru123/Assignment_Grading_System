@@ -21,8 +21,8 @@ const studentSchema = new mongoose.Schema({
     department: {
         type: String,
         required: true
-    },          
-    semester : {
+    },
+    semester: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Semester"
     },
@@ -49,7 +49,7 @@ const studentSchema = new mongoose.Schema({
     }
 }, { timestamps: true }, { collection: "students" });
 
-studentSchema.pre('save', async function(next) {
+studentSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }

@@ -148,10 +148,32 @@ const getSubjectByFaculty = async (req, res) => {
         });
 }
 
+const getSubjectById = async (req, res) => {
+    await subjectSchema.findById(req.params.id)
+        .then(subject => {
+            if (!subject) {
+                return res.status(404).send({
+                    message: "Subject not found with id " + req.params.id
+                });
+            }
+            res.send(subject);
+        }).catch(err => {
+            if (err.kind === 'ObjectId') {
+                return res.status(404).send({
+                    message: "Subject not found with id " + req.params.id
+                });
+            }
+            return res.status(500).send({
+                message: "Error retrieving subject with id " + req.params.id
+            });
+        });
+}
+
 module.exports = {
     registerSubject,
     getAllSubjects,
     updateSbuject,
     deleteSubject,
     getSubjectByFaculty,
+    getSubjectById
 };

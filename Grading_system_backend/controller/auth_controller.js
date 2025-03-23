@@ -14,7 +14,7 @@ const studentAuthenticator = async (req, res) => {
         const student = await studentModel.findOne({ email: email });
 
         if (!student) {
-            return res.status(400).json({status: true, message: "Invalid Email or Password" });
+            return res.status(400).json({status: false, message: "Invalid Email or Password" });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, student.password);
@@ -49,7 +49,7 @@ const facultyAuthenticator = async (req, res) => {
         const faculty = await facultyModel.findOne({ email: email });
 
         if (!faculty) {
-            return res.status(400).json({status: true, message: "Invalid Email or Password" });
+            return res.status(400).json({status: false, message: "Invalid Email or Password" });
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, faculty.password);

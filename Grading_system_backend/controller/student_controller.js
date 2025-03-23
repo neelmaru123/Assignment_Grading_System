@@ -269,6 +269,7 @@ const submittedAssignment = async (req, res) => {
                 "assignmentDetails.description": 1,
                 "assignmentDetails.deadline": 1,
                 "assignmentDetails.subjectName": 1,
+                "assignmentDetails.subjectId": 1,
                 "assignments.grade": 1,
                 "assignments.remarks": 1,
                 "assignments.submissionDate": 1
