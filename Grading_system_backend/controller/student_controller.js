@@ -13,7 +13,7 @@ const registerStudent = async (req, res) => {
         });
     }
 
-    const { name, email, password, rollNo, department, assignments } = req.body;
+    const { name, email, password, rollNo, department, assignments, semester } = req.body;
 
     // Create a Student
     const student = new studentModel({
@@ -22,7 +22,8 @@ const registerStudent = async (req, res) => {
         password,
         rollNo,
         department,
-        assignments
+        assignments,
+        semester
     });
 
     // Save Student in the database

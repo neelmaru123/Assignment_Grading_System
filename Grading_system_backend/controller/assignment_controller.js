@@ -17,7 +17,9 @@ const registerAssignment = async (req, res) => {
 
 
     try {
-        const semester = await SemesterModel.findOne({ 'subjects.subjectId': subjectId }).exec();
+        const Subject = await SubjectModel.findOne({ '_id': subjectId }).exec();
+        const semester = await SemesterModel.findOne({ '_id': Subject.semesterId }).exec();
+        
         if (!semester) {
             return res.status(404).send({
                 message: "Semester not found"
@@ -262,6 +264,47 @@ const submittedStudents = async (req, res) => {
 }
 
 
+const removeSubmiitedAssignment = async (req, res) => {
+    const { assignmentId, studentId } = req.body;
+    try{
+        const updatedStudent = await studentModel.findByIdAndUpdate(
+            studentId, 
+            {
+                $pull: {
+                    assignments: { assignmentId: assignmentId } 
+                }
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedStudent) {
+            return res.status(404).json({ message: "Student not found" });
+        }
+
+        const updatedAssignment = await assignmentModel.findByIdAndUpdate(
+            assignmentId,
+            {
+                $pull: {
+                    students: { studentId: studentId }
+                }
+            },
+            { new: true }
+        );
+
+        if (!updatedAssignment) {
+            return res.status(404).json({ message: "Assignment not found" });
+        }
+
+        res.status(200).json({
+            message: "Assignment removed successfully",
+        });
+    }
+    catch(err){
+        res.status(500).json({ message: 'Error removing assignment', error: err });
+    }
+}
+
+
 
 module.exports = {
     registerAssignment,
@@ -270,5 +313,6 @@ module.exports = {
     updateAssignment,
     deleteAssignment,
     pendingStudents,
-    submittedStudents
+    submittedStudents,
+    removeSubmiitedAssignment
 };

@@ -24,7 +24,7 @@ const studentSchema = new mongoose.Schema({
     },
     semester: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Semester"
+        ref : "Semester"
     },
     assignments: [
         {

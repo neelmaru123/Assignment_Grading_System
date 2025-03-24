@@ -43,7 +43,7 @@ export default function SubjectById() {
     }
   }, [subject])
 
-  console.log(faculty);
+  console.log(subject);
 
   useEffect(() => {
     // Get pendingAssignment
@@ -333,7 +333,9 @@ export default function SubjectById() {
               </tr>
             </thead>
             <tbody className="">
-              {pedningAssignment.map((assignment) => (
+              {pedningAssignment
+              .filter((assignment) => assignment.subjectId == SubjectId)
+              .map((assignment) => (
                 <tr key={assignment._id} className="align-middle h-16">
                   <td className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center me-2">
                     {/* Icon or Image */}

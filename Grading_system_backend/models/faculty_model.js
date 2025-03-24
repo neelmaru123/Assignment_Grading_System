@@ -32,7 +32,7 @@ const facultySchema = new mongoose.Schema({
     }
 }, { timestamps: true }, { collection: "faculties" });
 
-facultySchema.pre('save', async function(next) {
+facultySchema.pre('save', async function(next) {3
     if (!this.isModified('password')) {
         return next();
     }

@@ -37,9 +37,9 @@ export default function Subjects() {
 
   useEffect(() => {
     if (state.student && state.student.semester) {
-      fetch("http://localhost:5000/semesters/getSemesterById/" + state.student.semester)
+      fetch("http://localhost:5000/subjects/getSubjectBySemester/" + state.student.semester)
         .then((res) => res.json())
-        .then((data) => setState((prev) => ({ ...prev, subject: data.subjects })))
+        .then((data) => setState((prev) => ({ ...prev, subject: data })))
     }
   }, [state.student])
 
@@ -50,10 +50,10 @@ export default function Subjects() {
           <div className="flex items-center justify-center rounded-t-2xl">
             <h1 className="text-3xl font-semibold">Subjects</h1>
           </div>
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap justify-evenly">
             {state.subject.map((subject: any) => (
-              <div className="h-60 w-80 mx-3 mb-6 rounded-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject.subjectId} onClick={() => {
-                router.replace("/User/Subjects/" + subject.subjectId)
+              <div className="h-60 w-80 mx-3 mb-6 rounded-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer" key={subject._id} onClick={() => {
+                router.replace("/User/Subjects/" + subject._id)
               }}>
                 <div className="h-3/4 w-auto overflow-hidden">
                   <Image

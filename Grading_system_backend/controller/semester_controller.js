@@ -113,7 +113,7 @@ const deleteSemester = async (req, res) => {
 }
 
 const getSemesterByFaculty = async (req, res) => {
-    await SemesterSchema.find({ "subjects.facultyId": req.params.facultyId })
+    await subjectSchema.find({ "subjects.facultyId": req.params.facultyId })
         .then(semesters => {
             res.send(semesters);
         }).catch(err => {

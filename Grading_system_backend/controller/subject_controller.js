@@ -169,11 +169,23 @@ const getSubjectById = async (req, res) => {
         });
 }
 
+const getSubjectBySemester = async (req, res) => {
+    await subjectSchema.find({ semesterId: req.params.semesterId })
+        .then(subjects => {
+            res.send(subjects);
+        }).catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while retrieving subjects."
+            });
+        });
+}
+
 module.exports = {
     registerSubject,
     getAllSubjects,
     updateSbuject,
     deleteSubject,
     getSubjectByFaculty,
-    getSubjectById
+    getSubjectById,
+    getSubjectBySemester
 };

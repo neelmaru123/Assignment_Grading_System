@@ -8,21 +8,6 @@ const semesterSchema = new mongoose.Schema({
     totalStudents: {
         type: Number
     },
-    subjects: [
-        {
-            subjectId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Subject"
-            },
-            subjectName: {
-                type: String
-            },
-            facultyId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Faculty"
-            }
-        }
-    ],
 }, { timestamps: true }, {collection : "Semesters"});
 
 module.exports = mongoose.model("Semester", semesterSchema)

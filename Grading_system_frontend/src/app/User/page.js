@@ -20,34 +20,44 @@ export default function Home() {
   const studentId = localStorage.getItem('studentId');
   const [isNotificationModelOpen, setIsNotificationModelOpen] = useState(false);
   const [latestNotification, setLatestNotification] = useState([]);
+  const URL = "http://localhost:5000"
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
 
   useEffect(() => {
-    // Get student
-    fetch("http://localhost:5000/students/" + studentId)
+    // Get Student Details
+    fetch(URL + "/students/" + studentId)
       .then((response) => response.json())
       .then((data) => setStudent(data));
   }, [])
 
+  console.log(student);
+
+
   useEffect(() => {
     if (student && student.semester) {
-      fetch("http://localhost:5000/semesters/getSemesterById/" + student.semester)
+      // Get subjects of the student 
+      fetch(URL + "/subjects/getSubjectBySemester/" + student.semester)
         .then((res) => res.json())
-        .then((data) => setSubject(data.subjects))
+        .then((data) => setSubject(data))
 
-      fetch("http://localhost:5000/notifications/student/" + studentId)
+      // Get notifications 
+      fetch(URL + "/notifications/student/" + studentId)
         .then((res) => res.json())
         .then((data) => setNotification(data))
 
-      fetch("http://localhost:5000/notifications/latest/" + studentId)
+      // Get latest notifications
+      fetch(URL + "/notifications/latest/" + studentId)
         .then((res) => res.json())
         .then((data) => setLatestNotification(data))
     }
   }, [student])
 
 
+
   useEffect(() => {
     // Get pendingAssignment
-    fetch("http://localhost:5000/students/pendingAssignments", {
+    fetch(URL + "/students/pendingAssignments", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +67,7 @@ export default function Home() {
       .then((response) => response.json())
       .then((data) => setPedningAssignment(data));
     // submittedAssignment
-    fetch("http://localhost:5000/students/submittedAssignment", {
+    fetch(URL + "/students/submittedAssignment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +127,7 @@ export default function Home() {
     formData.append("assignmentId", assignmentId);
 
     try {
-      const response = await fetch("http://localhost:5000/students/upload", {
+      const response = await fetch(URL + "/students/upload", {
         method: "POST",
         body: formData,
       });
@@ -131,7 +141,38 @@ export default function Home() {
       console.error("Error uploading file:", error);
       toast.error("An error occurred");
     }
+
   };
+
+  const handleRemoveClick = (assignmentId) => {
+    setSelectedAssignmentId(assignmentId); // Store the assignment ID to be removed
+    setShowConfirmModal(true); // Show the confirmation modal
+  };
+
+  const handleConfirmRemove = async () => {
+    try {
+      const response = await fetch(URL + "/assignments/removeAssignment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: {
+          studentId: studentId,
+          assignmentId: selectedAssignmentId,
+        },
+      });
+      console.log(response);
+      setShowConfirmModal(false);
+    } catch (error) {
+      console.error("Error removing assignment:", error);
+      toast.error("Failed to remove assignment");
+    }
+  };
+
+  const handleCancelRemove = () => {
+    setShowConfirmModal(false); // Close the modal without removing
+  };
+
 
   return (
     <div className="ml-28 h-screen w-auto text-black p-4">
@@ -147,7 +188,7 @@ export default function Home() {
             </div>
             <div className="float-start ms-2">
               <p className="font-bold">Pending assignments</p>
-              <p className="text-sm">5</p>
+              <p className="text-sm">{pedningAssignment.length}</p>
             </div>
           </div>
         </div>
@@ -296,7 +337,7 @@ export default function Home() {
           <div className="w-3/4 h-96 bg-white rounded-2xl p-4">
             {/* Box-1 Header Content */}
             <div className="flex flex-row justify-between">
-              <p className="text-2xl font-serif font-bold mb-3">Submitted assignments</p>
+              <p className="text-2xl font-serif font-bold mb-3">Graded assignments</p>
               <div className="flex flex-row justify-end align-middle space-x-2">
                 <div className="relative">
                   <input
@@ -380,8 +421,45 @@ export default function Home() {
               </div>
             )}
           </div>
-          <div className="w-1/4 h-96 bg-white rounded-2xl p-4 bg-[url('/background.svg')] bg-cover bg-center">
+          <div className="w-1/4 h-96 bg-white rounded-2xl p-4  bg-cover bg-center">
+            {/* Box-2 Header */}
+            <div>
+              <p className="text-2xl font-serif font-bold mb-3">Submiited Assignmet</p>
+            </div>
             {/* Box-2 Content */}
+            <table className="w-full mt-4">
+              <thead className="">
+                <tr className="text-gray-500">
+                  <th className="text-left font-serif font-bold ">Assignment</th>
+                  <th className="text-right font-serif font-bold">Action</th>
+                </tr>
+              </thead>
+              <tbody className="">
+                {submittedAssignmentsToShow
+                  .filter((assignment) => {
+                    const gradeDate = new Date(assignment.assignments.submissionDate);
+                    const oneDayAgo = new Date();
+                    gradeDate.setDate(gradeDate.getDate() + 1);
+                    return oneDayAgo < gradeDate;
+                  })
+                  .map((assignment) => (
+                    <tr key={assignment.assignmentDetails._id} className="align-middle h-16">
+                      <td>
+                        <p className="font-serif font-bold">{assignment.assignmentDetails.subjectName}</p>
+                        <p className="font-serif">{assignment.assignmentDetails.title}</p>
+                      </td>
+                      <td className="text-right">
+                        <button
+                          className={`bg-red-600 text-white p-2 rounded-lg inline-flex items-center justify-center`}
+                          onClick={() => handleRemoveClick(assignment.assignmentDetails._id)}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -435,6 +513,31 @@ export default function Home() {
           </table>
         </div>
       </div>
+
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-1/3 shadow-lg">
+            <h2 className="text-xl font-bold text-gray-800 mb-4">Confirm Removal</h2>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to remove this assignment? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
+                onClick={handleCancelRemove}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-600 text-white px-4 py-2 rounded-lg"
+                onClick={handleConfirmRemove}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* submittedAssignment model */}
       <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center modal-overlay modal-overlay ${isSubmittedModalOpen ? 'show' : ''}`}>
