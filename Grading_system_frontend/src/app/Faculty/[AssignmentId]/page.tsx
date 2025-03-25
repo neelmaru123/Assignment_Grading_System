@@ -189,9 +189,9 @@ export default function AssignmentById() {
                                     <td>
                                         <p className="font-serif font-bold">{student.name}</p>
                                     </td>
-                                    <td>
+                                    {/* <td>
                                         <p className="font-serif font-bold">{new Date(student.assignments[0].submissionDate).toLocaleDateString()}</p>
-                                    </td>
+                                    </td> */}
                                     <td>
                                         <p className="font-serif font-bold">{student.assignments[0].grade}</p>
                                     </td>

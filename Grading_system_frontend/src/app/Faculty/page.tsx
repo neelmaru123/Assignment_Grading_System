@@ -47,7 +47,9 @@ export default function AdminHome() {
         pendingStudents: [],
         showMore: false,
         isModalOpen: false,
-        submitedStudents: [],
+        submitedStudents: [
+            {submissionDate : "",}
+        ],
         filterPendingStudents: "",
         filterSubmittedStudents: "",
         graphData: { pendingStudents: 0, totalStudents: 0, title: "", subjectName: "" }
@@ -77,25 +79,36 @@ export default function AdminHome() {
     }, [])
 
     const setPendingStudents = async (id: any) => {
-        const response = await fetch("http://localhost:5000/assignments/pendingStudents", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id: id })
-        })
-        const data = await response.json()
-        setState((prevState) => ({ ...prevState, pendingStudents: data }))
+        try{
+            const response = await fetch("http://localhost:5000/assignments/pendingStudents", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: id })
+            })
+            const data = await response.json()
+            setState((prevState) => ({ ...prevState, pendingStudents: data }))
+        }
+        catch(e){
+            console.log("error fetching pendingStudents :" + e)
+        }
 
-        fetch("http://localhost:5000/assignments/submittedStudents", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id: id })
-        })
-            .then((res) => res.json())
-            .then((data) => setState((prevState) => ({ ...prevState, submitedStudents: data })))
+        try{
+            fetch("http://localhost:5000/students/submittedAssignment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: id })
+            })
+                .then((res) => res.json())
+                .then((data) => setState((prevState) => ({ ...prevState, submitedStudents: data })))
+        }
+        catch(e){
+            console.log("Error fetching submittedStudent" + e)
+        }
+        
     }
 
     // if(state.assignmentData.length > 0){
@@ -142,7 +155,7 @@ export default function AdminHome() {
                             </div>
                             <div className="float-start ms-2">
                                 <p className="font-bold">Current Assignments</p>
-                                <p className="text-sm">5</p>
+                                <p className="text-sm">{state.assignmentData.length}</p>
                             </div>
                         </div>
                     </div>
@@ -167,7 +180,7 @@ export default function AdminHome() {
                     <div className="flex space-x-3 mb-3">
                         <div className="w-3/4 h-auto min-h-96 bg-white rounded-2xl p-4">
                             {/* Box-1 Header Content */}
-                            <p className="text-2xl font-serif font-bold mb-3 float-start">Assignmens</p>
+                            <p className="text-2xl font-serif font-bold mb-3 float-start">Assignments</p>
                             <div className="flex flex-row justify-end align-middle space-x-2">
                                 <div className="relative">
                                     <input
@@ -328,7 +341,7 @@ export default function AdminHome() {
                                         <p className="font-serif font-bold">{student.name}</p>
                                     </td>
                                     <td>
-                                        <p className="font-serif font-bold">{new Date(student.assignments[0].submissionDate).toLocaleDateString()}</p>
+                                        <p className="font-serif font-bold">{new Date(student.assignments[0].submissionDate).toLocaleDateString() || "No submissionDate"}</p>
                                     </td>
                                     <td>
                                         <p className="font-serif font-bold">{student.assignments[0].grade}</p>
@@ -348,7 +361,7 @@ export default function AdminHome() {
                                         <p className="font-serif font-bold">{`(${student.rollNo})`}</p>
                                     </td>
                                     <td>
-                                        <p className="font-serif font-bold">{new Date(student.submissionDate).toLocaleDateString()}</p>
+                                        <p className="font-serif font-bold">{new Date(student.submissionDate).toLocaleDateString() || "No submissionDate"}</p>
                                     </td>
                                     <td>
                                         <p className="font-serif font-bold">{student.grade}</p>

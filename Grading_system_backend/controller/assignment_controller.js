@@ -19,7 +19,7 @@ const registerAssignment = async (req, res) => {
     try {
         const Subject = await SubjectModel.findOne({ '_id': subjectId }).exec();
         const semester = await SemesterModel.findOne({ '_id': Subject.semesterId }).exec();
-        
+
         if (!semester) {
             return res.status(404).send({
                 message: "Semester not found"
@@ -171,20 +171,27 @@ const deleteAssignment = async (req, res) => {
 const pendingStudents = async (req, res) => {
     const { id } = req.body;
     try {
+
         const assignment = await assignmentModel.findOne({
             _id: id,
-            // subjectId: subjectId
-        }).select('students')
+        })
 
         if (!assignment) {
             return res.status(404).json({ message: 'Assignment not found' });
+        }
+
+        const subject = await SubjectModel.findOne({ _id: assignment.subjectId }).exec();
+
+        if (!subject) {
+            return res.status(404).json({ message: 'Subject not found' });
         }
 
         const submittedStudentIds = assignment.students.map(student => student.studentId);
         const pendingStudents = await studentModel.aggregate([
             {
                 $match: {
-                    _id: { $nin: submittedStudentIds }
+                    _id: { $nin: submittedStudentIds },
+                    semester: subject.semesterId
                 }
             }
         ]);
@@ -199,20 +206,20 @@ const submittedStudents = async (req, res) => {
     const { id } = req.body;
     try {
         const submissions = await assignmentModel.aggregate([
-            // Match the specific assignment (optional if all assignments are needed)
+            
             {
                 $match: {
-                    _id: new mongoose.Types.ObjectId(id) // Replace `assignmentId` with the actual assignment ID
+                    _id: id
                 }
             },
-            // Unwind the students array to process individual student submissions
+            
             {
                 $unwind: "$students"
             },
-            // Lookup student details from the students collection
+           
             {
                 $lookup: {
-                    from: "students", // Name of the student collection
+                    from: "students", 
                     localField: "students.studentId",
                     foreignField: "_id",
                     as: "studentDetails"
@@ -238,7 +245,7 @@ const submittedStudents = async (req, res) => {
                 }
             }
         ]);
-        
+
         // const assignment = await assignmentModel.findOne({
         //     _id: id,
         //     // subjectId: subjectId
@@ -266,12 +273,12 @@ const submittedStudents = async (req, res) => {
 
 const removeSubmiitedAssignment = async (req, res) => {
     const { assignmentId, studentId } = req.body;
-    try{
+    try {
         const updatedStudent = await studentModel.findByIdAndUpdate(
-            studentId, 
+            studentId,
             {
                 $pull: {
-                    assignments: { assignmentId: assignmentId } 
+                    assignments: { assignmentId: assignmentId }
                 }
             },
             { new: true } // Return the updated document
@@ -299,7 +306,7 @@ const removeSubmiitedAssignment = async (req, res) => {
             message: "Assignment removed successfully",
         });
     }
-    catch(err){
+    catch (err) {
         res.status(500).json({ message: 'Error removing assignment', error: err });
     }
 }
